@@ -36,11 +36,18 @@ OptionParser.new do |opts|
     puts opts
     exit
   end
+
+  # One-shot run: process existing logs and exit (no watcher)
+  opts.on("--once", "Process existing email logs once and exit") do
+    options[:once] = true
+  end
 end.parse!
 
 CONFIG_PATH = options[:config_path]
 DB_PATH = options[:db_path]
 EMAIL_LOGS_DIR = options[:email_logs_dir]
+
+## (will implement one-shot processing after definitions below)
 
 def load_config
   JSON.parse(File.read(CONFIG_PATH))
@@ -123,8 +130,8 @@ def process_email_file(filepath, db, parsers)
   file_content = File.read(filepath)
   data = JSON.parse(file_content)
 
-  data['threads']&.each do |thread|
-    thread['messages']&.each do |msg|
+  messages = data['messages'] || data.dig('threads', 0, 'messages') || []
+  messages.each do |msg|
       payload = msg['payload'] || {}
       headers = {}
       (payload['headers'] || []).each { |h| headers[h['name']] = h['value'] }
@@ -155,7 +162,6 @@ def process_email_file(filepath, db, parsers)
         end
       end
     end
-  end
 end
 
 def process_existing_files(db, parsers)
@@ -167,6 +173,12 @@ end
 parsers = load_config
 db = init_db
 process_existing_files(db, parsers)
+
+# If --once flag was passed, exit after processing
+if options[:once]
+  puts "Processed existing logs once."
+  exit
+end
 
 puts "Watching #{EMAIL_LOGS_DIR} for new emails..."
 

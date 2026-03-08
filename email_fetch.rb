@@ -22,13 +22,14 @@ result = JSON.parse(stdout)
 threads = result['threads'] || []
 threads.each do |t|
   id = t['id']
-  filepath = File.join(OUTPUT_DIR, "#{id}.json")
-  next if File.exist?(filepath)
   thread_json = run_cmd("gog gmail thread get #{id} -j -a #{ACCOUNT}")
   thread = JSON.parse(thread_json)
   thread_data = thread['thread'] || thread
   msgs = thread_data['messages'] || []
   msgs.each do |msg|
+    msg_id = msg['id']
+    filepath = File.join(OUTPUT_DIR, "#{msg_id}.json")
+    next if File.exist?(filepath)
     payload = msg['payload'] || {}
     body = payload.dig('body','data')
     if body.nil? || body.empty?
@@ -39,7 +40,6 @@ threads.each do |t|
       end
     end
     msg['body'] = body
+    File.write(filepath, JSON.pretty_generate({ 'messages' => [msg] }))
   end
-  t['messages'] = msgs
-  File.write(filepath, JSON.pretty_generate({ 'threads' => [t] }))
 end
