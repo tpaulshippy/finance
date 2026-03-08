@@ -1,0 +1,10 @@
+[
+  {
+    "name": "fidelity_card",
+    "from_pattern": "fidelityealerts",
+    "subject_pattern": "charge was authorized",
+    "merchant_pattern": "charged\\s*\\$\\d+\\.\\d+\\s*at\\s+(.+?)\\.",
+    "amount_pattern": "\\$(\\d+\\.\\d+)",
+    "card_pattern": "ending\\s*in\\s*(\\d{4})"
+  }
+]
