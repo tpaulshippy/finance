@@ -98,7 +98,7 @@ def parse_email(body, parser)
   end
 
   if amount && merchant
-    amount = -amount if parser['is_credit']
+    amount = -amount
     {
       amount: amount,
       merchant: merchant,
