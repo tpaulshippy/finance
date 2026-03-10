@@ -189,7 +189,7 @@ def process_email_file(filepath, db, parsers)
                 unmatched_reason = nil
                 if parsed[:transaction_type] == 'withdrawal' && parsed[:card_last_four]
                   auth_match = db.get_first_row(
-                    'SELECT id, merchant FROM transactions WHERE transaction_type = ? AND amount = ? AND card_last_four = ? ORDER BY date DESC, id DESC LIMIT 1',
+                    'SELECT id, merchant FROM transactions WHERE transaction_type = ? AND amount = ? AND card_last_four = ? AND matched_auth_id IS NULL ORDER BY date DESC, id DESC LIMIT 1',
                     ['authorization', parsed[:amount], parsed[:card_last_four]]
                   )
                   if auth_match
