@@ -74,6 +74,7 @@ def init_db
       transaction_type TEXT DEFAULT 'posted',
       account TEXT,
       is_spending INTEGER DEFAULT 1,
+      matches_auth_on_card INTEGER DEFAULT 0,
       created_at TEXT DEFAULT CURRENT_TIMESTAMP
     )
   SQL
@@ -188,7 +189,7 @@ def process_email_file(filepath, db, parsers)
              if existing.nil?
                 matched_auth_id = nil
                 unmatched_reason = nil
-                if parsed[:transaction_type] == 'withdrawal' && parsed[:card_last_four]
+                if parser['matches_auth_on_card'] == 1 && parsed[:card_last_four]
                   auth_match = db.get_first_row(
                     'SELECT id, merchant FROM transactions WHERE transaction_type = ? AND amount = ? AND card_last_four = ? AND matched_posted_id IS NULL ORDER BY date DESC, id DESC LIMIT 1',
                     ['authorization', parsed[:amount], parsed[:card_last_four]]
