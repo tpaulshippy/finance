@@ -51,32 +51,48 @@ Actual Budget offers bank sync integrations, but some (SimpleFIN) require paid s
 CREATE TABLE email_parsers (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL,
-  from_pattern TEXT,           -- Match sender email/domain
-  subject_pattern TEXT,        -- Match email subject
-  merchant_pattern TEXT,        -- Regex to extract merchant name
-  amount_pattern TEXT,          -- Regex to extract amount
-  card_pattern TEXT,            -- Regex to extract card last 4
-  account_pattern TEXT,         -- Regex to extract account info
+  from_pattern TEXT,
+  subject_pattern TEXT,
+  merchant_pattern TEXT,
+  amount_pattern TEXT,
+  card_pattern TEXT,
+  account_pattern TEXT,
+  date_pattern TEXT,
   transaction_type TEXT DEFAULT 'posted',
-  account TEXT,                 -- Actual Budget account name to map to
+  account TEXT,
   is_spending INTEGER DEFAULT 1,
+  matches_auth_on_card INTEGER DEFAULT 0,
   created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Parsed transactions staging table
 CREATE TABLE transactions (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  date TEXT,
+  transaction_date TEXT,
   merchant TEXT,
   amount REAL,
   card_last_four TEXT,
-  source TEXT,                  -- Parser name that created this
+  source TEXT,
   email_subject TEXT,
   email_file TEXT,
   transaction_type TEXT DEFAULT 'posted',
   account TEXT,
-  synced_to_actual INTEGER DEFAULT 0,
+  matched_auth_id INTEGER,
+  matched_posted_id INTEGER,
+  actual_posted INTEGER DEFAULT 0,
   created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Transaction flags for tracking issues
+CREATE TABLE transaction_flags (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  transaction_id INTEGER,
+  type TEXT NOT NULL,
+  status TEXT DEFAULT 'open',
+  description TEXT,
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+  resolved_at TEXT,
+  FOREIGN KEY(transaction_id) REFERENCES transactions(id)
 );
 ```
 
