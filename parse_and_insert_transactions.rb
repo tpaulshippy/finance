@@ -45,7 +45,7 @@ def init_db
   db.execute(<<-SQL)
     CREATE TABLE IF NOT EXISTS transactions (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      date TEXT,
+      transaction_date TEXT,
       merchant TEXT,
       amount REAL,
       card_last_four TEXT,
