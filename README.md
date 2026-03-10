@@ -4,7 +4,7 @@ A free, open-source alternative to Actual Budget's bank sync options. This proje
 
 ## Overview
 
-Actual Budget offers bank sync integrations, but all require paid subscriptions. This project provides a free alternative by:
+Actual Budget offers bank sync integrations, but some (SimpleFIN) require paid subscriptions. This project provides a free alternative by:
 
 1. **Fetching emails** from your email provider (Gmail via gog CLI, or directly via IMAP)
 2. **Parsing transactions** using configurable regex-based parsers
