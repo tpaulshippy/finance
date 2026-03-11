@@ -1,3 +1,4 @@
+require('dotenv').config();
 const api = require('@actual-app/api');
 const sqlite3 = require('better-sqlite3');
 
